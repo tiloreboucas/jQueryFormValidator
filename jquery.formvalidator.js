@@ -234,74 +234,11 @@ var formValidatorCurrency = "R$";
                                 if(item.value != "" && item.value.search(formValidatorCurrency + ' ') == -1) item.value = formValidatorCurrency + ' ' + item.value;
                             }
                         });
-                        
-                        $(item).keydown(function(e){
-
-                            if (e.ctrlKey && e.which == 86) this.pasting = true;
-                            if (e.shiftKey && e.which == 45) this.pasting = true;
-                            if (item.value == '0,00' && e.which == 8) return false;
-                            
-                            var x = item.value.replace(/,/gi,'');
-
-                            var v = x.replace(/\./gi,'');
-
-                            var newVal = "";
-                            var val0 = "";
-                            var val1 = "";
-
-                            if(e.which != 8) {
-                                // Escrevendo
-
-                                if(v[0] == 0) {
-                                    newVal = v.substring(1, v.length);
-                                    val0 = newVal.substring(0, v.length - 2);
-                                    val1 = newVal.substring(v.length - 2);
-                                } else {
-                                    val0 = v.substring(0, v.length - 1);
-                                    val1 = v.substring(v.length - 1);
-                                }
-                                
-                                newVal = val0 + "," + val1;
-
-                                item.value = newVal;
-                            } else {
-                                // Apagando
-   
-                                if(v.length == 3) {
-                                    newVal = v.substring(0, v.length);
-                                    val0 = "0";
-                                    val1 = v;
-                                } else {
-                                    newVal = v.substring(0, v.length);
-                                    val0 = v.substring(0, v.length - 3);
-                                    val1 = v.substring(v.length - 3);
-                                }
-                                
-                                newVal = val0 + "," + val1;
-
-                                item.value = newVal;
-                            }
-
-                            var d = item.value.split(",");
-                            newVal = "";
-
-                            if(d[0].length > 3){
-                                for(var i = d[0].length; i > 0; i = i - 3){ 
-                                    if(i == d[0].length) {
-                                        newVal = d[0].substring(i-3, i) + "" + newVal;
-                                    } else { 
-                                        newVal = d[0].substring(i-3, i) + "."+ newVal;
-                                    } 
-                                }
-
-                                item.value = newVal + "," + d[1];
-                            }
-
-
-                        });
-
 
                         $(item).keypress(function(e){
+                            if (e.ctrlKey && e.which == 86) this.pasting = true;
+                            if (e.shiftKey && e.which == 45) this.pasting = true;
+
                             if (this.pasting) {
                                 this.pasting = false;
                                 return true;
@@ -310,9 +247,73 @@ var formValidatorCurrency = "R$";
                             e = e || window.event;
                             if (e.charCode == 0) return true;
                             var s = String.fromCharCode(e.charCode);
+                            console.log(s);
                             if (s < '0' || s > '9') return false;
                             
                             return true;
+                        });
+                        
+                        $(item).keydown(function(e){
+                            if (item.value == '0,00' && e.which == 8) return false;
+                            
+                            if(e){
+                                console.log(e);
+
+                                var x = item.value.replace(/,/gi,'');
+                                var v = x.replace(/\./gi,'');
+
+                                var newVal = "";
+                                var val0 = "";
+                                var val1 = "";
+
+                                if(e.which != 8) {
+                                    // Escrevendo
+
+                                    if(v[0] == 0) {
+                                        newVal = v.substring(1, v.length);
+                                        val0 = newVal.substring(0, v.length - 2);
+                                        val1 = newVal.substring(v.length - 2);
+                                    } else {
+                                        val0 = v.substring(0, v.length - 1);
+                                        val1 = v.substring(v.length - 1);
+                                    }
+                                    
+                                    newVal = val0 + "," + val1;
+
+                                    item.value = newVal;
+                                } else {
+                                    // Apagando
+       
+                                    if(v.length == 3) {
+                                        newVal = v.substring(0, v.length);
+                                        val0 = "0";
+                                        val1 = v;
+                                    } else {
+                                        newVal = v.substring(0, v.length);
+                                        val0 = v.substring(0, v.length - 3);
+                                        val1 = v.substring(v.length - 3);
+                                    }
+                                    
+                                    newVal = val0 + "," + val1;
+
+                                    item.value = newVal;
+                                }
+
+                                var d = item.value.split(",");
+                                newVal = "";
+
+                                if(d[0].length > 3){
+                                    for(var i = d[0].length; i > 0; i = i - 3){ 
+                                        if(i == d[0].length) {
+                                            newVal = d[0].substring(i-3, i) + "" + newVal;
+                                        } else { 
+                                            newVal = d[0].substring(i-3, i) + "."+ newVal;
+                                        } 
+                                    }
+
+                                    item.value = newVal + "," + d[1];
+                                }
+                            }
                         });
                     }
 
