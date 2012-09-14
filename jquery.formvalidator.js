@@ -236,6 +236,7 @@ var formValidatorCurrency = "R$";
                         });
                         
                         $(item).keydown(function(e){
+
                             if (e.ctrlKey && e.which == 86) this.pasting = true;
                             if (e.shiftKey && e.which == 45) this.pasting = true;
                             if (item.value == '0,00' && e.which == 8) return false;
@@ -312,10 +313,6 @@ var formValidatorCurrency = "R$";
                             if (s < '0' || s > '9') return false;
                             
                             return true;
-                        });
-
-                        $(item).keyup(function(e){
-
                         });
                     }
 
