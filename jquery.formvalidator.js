@@ -52,7 +52,21 @@ var formValidatorCurrency = "R$";
                     var filter = null;
                     var mode = null;
                     var mask = null;
+                    /*
+                    if($this.attr.securitylock) {
+                        $(item).keydown(function() {
+                            if($this.attr.keypress) {
+                                return false;
+                            } else {
+                               $this.attr.keypress = true;
+                            }
+                        });    
 
+                        $(item).keyup(function() {
+                            $this.attr.keypress = false;
+                        });
+                    }
+                    */
                     if ($(item).hasClass('integer')) {
                         mode = 'tipoA';
                         filter = new RegExp(/^[0-9]+$/);
@@ -202,28 +216,92 @@ var formValidatorCurrency = "R$";
                         $(item).css({'text-align': 'right'});
                         
                         $(item).focusin(function(){
-                            if ($(item)[0].value.length == 0) {
-                                $(item)[0].value = formValidatorCurrency + ' 0,00';
+                            if(item.value == ""){
+                                item.value = "0,00";
+                            } else {
+                                // Remove Cifrão
+                                item.value = item.value.substring(3, item.value.length);
                             }
+
+                            setTimeout(function(){ item.setSelectionRange(item.value.length, item.value.length + 1); }, 0);
                         });
 
                         $(item).focusout(function(){
-                            if ($(item)[0].value == (formValidatorCurrency + ' 0,00')) {
-                                $(item)[0].value = '';
+                            if(item.value == "0,00"){
+                                item.value = "";
+                            } else {
+                                // Insere Cifrão
+                                if(item.value != "" && item.value.search(formValidatorCurrency + ' ') == -1) item.value = formValidatorCurrency + ' ' + item.value;
                             }
                         });
-
-                        //var isNumber = new RegExp(/^[0-9]+$/);
-
+                        
                         $(item).keydown(function(e){
                             if (e.ctrlKey && e.which == 86) this.pasting = true;
                             if (e.shiftKey && e.which == 45) this.pasting = true;
-                            if (item.value.length == 3 && e.which == 8) return false;
+                            if (item.value == '0,00' && e.which == 8) return false;
+                            
+                            var x = item.value.replace(/,/gi,'');
+
+                            var v = x.replace(/\./gi,'');
+
+                            var newVal = "";
+                            var val0 = "";
+                            var val1 = "";
+
+                            if(e.which != 8) {
+                                // Escrevendo
+
+                                if(v[0] == 0) {
+                                    newVal = v.substring(1, v.length);
+                                    val0 = newVal.substring(0, v.length - 2);
+                                    val1 = newVal.substring(v.length - 2);
+                                } else {
+                                    val0 = v.substring(0, v.length - 1);
+                                    val1 = v.substring(v.length - 1);
+                                }
+                                
+                                newVal = val0 + "," + val1;
+
+                                item.value = newVal;
+                            } else {
+                                // Apagando
+   
+                                if(v.length == 3) {
+                                    newVal = v.substring(0, v.length);
+                                    val0 = "0";
+                                    val1 = v;
+                                } else {
+                                    newVal = v.substring(0, v.length);
+                                    val0 = v.substring(0, v.length - 3);
+                                    val1 = v.substring(v.length - 3);
+                                }
+                                
+                                newVal = val0 + "," + val1;
+
+                                item.value = newVal;
+                            }
+
+                            var d = item.value.split(",");
+                            newVal = "";
+
+                            if(d[0].length > 3){
+                                for(var i = d[0].length; i > 0; i = i - 3){ 
+                                    if(i == d[0].length) {
+                                        newVal = d[0].substring(i-3, i) + "" + newVal;
+                                    } else { 
+                                        newVal = d[0].substring(i-3, i) + "."+ newVal;
+                                    } 
+                                }
+
+                                item.value = newVal + "," + d[1];
+                            }
+
+
                         });
 
+
                         $(item).keypress(function(e){
-                            if (this.pasting) 
-                            {
+                            if (this.pasting) {
                                 this.pasting = false;
                                 return true;
                             }
@@ -233,17 +311,11 @@ var formValidatorCurrency = "R$";
                             var s = String.fromCharCode(e.charCode);
                             if (s < '0' || s > '9') return false;
                             
-                            if(item.value.length >= 5) {
-                                var v = item.value.replace(/,/gi,'');
-
-                                var newVal = "";
-                                var val0 = v.substring(0, v.length - 1);
-                                var val1 = v.substring(v.length - 1);
-                                newVal = val0 + "," + val1;
-                                item.value = newVal;
-                            }
-
                             return true;
+                        });
+
+                        $(item).keyup(function(e){
+
                         });
                     }
 
@@ -333,20 +405,6 @@ var formValidatorCurrency = "R$";
                                     $(label).remove();
                                 }
                             }
-                        });
-                    }
-
-                    if($this.attr.securitylock) {
-                        $(item).keydown(function() {
-                            if($this.attr.keypress) {
-                                return false;
-                            } else {
-                                $this.attr.keypress = true;
-                            }
-                        });    
-
-                        $(item).keyup(function() {
-                            $this.attr.keypress = false;
                         });
                     }
                 });
