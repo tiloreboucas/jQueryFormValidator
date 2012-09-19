@@ -247,7 +247,6 @@ var formValidatorCurrency = "R$";
                             e = e || window.event;
                             if (e.charCode == 0) return true;
                             var s = String.fromCharCode(e.charCode);
-                            console.log(s);
                             if (s < '0' || s > '9') return false;
                             
                             return true;
@@ -257,8 +256,6 @@ var formValidatorCurrency = "R$";
                             if (item.value == '0,00' && e.which == 8) return false;
                             
                             if(e){
-                                console.log(e);
-
                                 var x = item.value.replace(/,/gi,'');
                                 var v = x.replace(/\./gi,'');
 
@@ -313,6 +310,37 @@ var formValidatorCurrency = "R$";
 
                                     item.value = newVal + "," + d[1];
                                 }
+                            }
+                        });
+
+                        $(item).keyup(function(e){
+                            var x = item.value.replace(/,/gi,'');
+                            var v = x.replace(/\./gi,'');
+
+                            var newVal = "";
+                            var val0 = "";
+                            var val1 = "";
+
+                            val0 = v.substring(0, v.length - 2);
+                            val1 = v.substring(v.length - 2);
+
+                            newVal = val0 + "," + val1;
+
+                            item.value = newVal;
+
+                            var d = item.value.split(",");
+                            newVal = "";
+
+                            if(d[0].length > 3){
+                                for(var i = d[0].length; i > 0; i = i - 3){ 
+                                    if(i == d[0].length) {
+                                        newVal = d[0].substring(i-3, i) + "" + newVal;
+                                    } else { 
+                                        newVal = d[0].substring(i-3, i) + "."+ newVal;
+                                    } 
+                                }
+
+                                item.value = newVal + "," + d[1];
                             }
                         });
                     }
