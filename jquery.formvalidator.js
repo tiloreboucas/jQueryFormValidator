@@ -52,6 +52,7 @@ var formValidatorCurrency = "R$";
                     var filter = null;
                     var mode = null;
                     var mask = null;
+                    
                     /*
                     if($this.attr.securitylock) {
                         $(item).keydown(function() {
@@ -67,6 +68,7 @@ var formValidatorCurrency = "R$";
                         });
                     }
                     */
+                    
                     if ($(item).hasClass('integer')) {
                         mode = 'tipoA';
                         filter = new RegExp(/^[0-9]+$/);
