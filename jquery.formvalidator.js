@@ -438,8 +438,6 @@ var formValidatorCurrency = "R$";
                 });
             },
 
-
-
             validationGroup: function () {
                 var $this = this;
 
